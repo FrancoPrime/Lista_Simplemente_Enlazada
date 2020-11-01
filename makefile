@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Werror -Wconversion -std=c99 -g -O0
+CFLAGS=-g -Wall -Werror -Wconversion -Wtype-limits -pedantic -std=c99 -O0
 VFLAGS=--leak-check=full --track-origins=yes --show-reachable=yes
 OUTPUT=lista_se
 
