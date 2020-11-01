@@ -73,7 +73,7 @@ int lista_borrar(lista_t* lista){
   else
   {
     nodo_t* nodo_anterior = lista_elemento_en_posicion(lista, (lista->cantidad)-2);
-    nodo_anterior->siguiente == NULL;
+    nodo_anterior->siguiente = NULL;
     free(lista->nodo_fin);
     lista->nodo_fin = nodo_anterior;
     lista->cantidad -= 1;
@@ -89,8 +89,24 @@ int lista_borrar(lista_t* lista){
 //Devuelve EXITO si pudo eliminar o ERROR si no pudo.
 int lista_borrar_de_posicion(lista_t* lista, size_t posicion){
   if(!lista)
-    return NULL;
-  
+    return ERROR;
+  if(lista->cantidad < posicion || lista->cantidad == 1)
+    return lista_borrar(lista);
+  if(posicion == 0)
+  {
+    nodo_t* auxiliar = lista->nodo_inicio;
+    lista->nodo_inicio = lista->nodo_inicio->siguiente;
+    free(auxiliar);
+  }
+  else
+  {
+    nodo_t* nodo_anterior = lista_elemento_en_posicion(lista, posicion-1);
+    nodo_t* auxiliar = nodo_anterior->siguiente;
+    nodo_anterior->siguiente = auxiliar->siguiente;
+    free(auxiliar);
+  }
+  lista->cantidad -= 1;
+  return EXITO;
 }
 
 //Devuelve el elemento en la posicion indicada, donde 0 es el primer
@@ -141,6 +157,12 @@ int lista_apilar(lista_t* lista, void* elemento){
   return lista_insertar(lista, elemento);
 }
 
+//Desapila un elemento.
+//Devuelve EXITO si pudo desapilar o ERROR si no pudo.
+int lista_desapilar(lista_t* lista){
+  return lista_borrar(lista);
+}
+
 //Devuelve el elemento en el tope de la pila o NULL
 //en caso de estar vacía.
 void* lista_tope(lista_t* lista){
@@ -151,6 +173,12 @@ void* lista_tope(lista_t* lista){
 //Devuelve EXITO si pudo encolar o ERROR si no pudo.
 int lista_encolar(lista_t* lista, void* elemento){
   return lista_insertar(lista, elemento);
+}
+
+//Desencola un elemento.
+//Devuelve 0 si pudo desencolar o -1 si no pudo.
+int lista_desencolar(lista_t* lista){
+  return lista_borrar_de_posicion(lista, 0);
 }
 
 //Devuelve el primer elemento de la cola o NULL en caso de estar
