@@ -38,16 +38,34 @@ int lista_insertar(lista_t* lista, void* elemento){
   return EXITO;
 }
 
+//Inserta un elemento en la posicion indicada, donde 0 es insertar
+//como primer elemento y 1 es insertar luego del primer elemento.
+//En caso de no existir la posicion indicada, lo inserta al final.
+//Devuelve EXITO si pudo insertar o ERROR si no pudo.
+int lista_insertar_en_posicion(lista_t* lista, void* elemento, size_t posicion){
+  if(!lista)
+    return ERROR;
+  if(lista->cantidad < posicion)
+    return lista_insertar(lista, elemento);
+
+}
+
 //Quita de la lista el elemento que se encuentra en la ultima posición.
 //Devuelve EXITO si pudo eliminar o ERROR si no pudo.
 int lista_borrar(lista_t* lista){
   if(!lista)
     return ERROR;
-  if(lista->nodo_fin == NULL)
+  if(lista->nodo_fin == NULL) //TO DO
     return ERROR;
   return EXITO;
 }
 
+//Devuelve el elemento en la posicion indicada, donde 0 es el primer
+//elemento.
+//Si no existe dicha posicion devuelve NULL.
+void* lista_elemento_en_posicion(lista_t* lista, size_t posicion){
+  
+}
 
 //Devuelve el último elemento de la lista o NULL si la lista se
 //encuentra vacía.
