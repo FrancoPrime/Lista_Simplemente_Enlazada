@@ -10,23 +10,37 @@ void prueba_crear_lista(){
   lista_destruir(lista);
 }
 
-void prueba_insertar_elementos(){
+void prueba_insertar_elementos_secuencia(){
   lista_t* lista = lista_crear();
-  for(int i=0;i<10;i++)
+  for(size_t i=0;i<10;i++)
   {
-
+    lista_insertar(lista, (void*)i);
   }
   int resultado = lista_insertar(lista, (void*)4);
-  pa2m_afirmar(resultado == EXITO, "Insertar elementos");
-  pa2m_afirmar(lista_elementos(lista) == 2, "Contador de elementos");
-  nodo_t* elemento = lista_elemento_en_posicion(lista, 0);
-  pa2m_afirmar(lista_elementos(lista) == 2, "Se pueden encontrar los elementos correctamente");
+  pa2m_afirmar(resultado == EXITO && lista_elementos(lista) == 11, "Insertar nodos secuenciales");
+  void* elemento = lista_elemento_en_posicion(lista, 3);
+  pa2m_afirmar(elemento == (void*)3, "Los elementos son correctos al añadir secuencialmente");
+  lista_destruir(lista);
+}
+
+void prueba_insertar_elementos_aleatorio(){
+  lista_t* lista = lista_crear();
+  for(size_t i=0;i<10;i++)
+  {
+    lista_insertar(lista, (void*)i);
+  }
+  int resultado = lista_insertar_en_posicion(lista, (void*)99, 3);
+  pa2m_afirmar(resultado == EXITO && lista_elementos(lista) == 11, "Insertar nodo aleatorio");
+  void* elemento = lista_elemento_en_posicion(lista, 3);
+  pa2m_afirmar(elemento == (void*)99, "Los elementos son correctos al añadir aleatoriamente");
   lista_destruir(lista);
 }
 
 int main(){
-  pa2m_nuevo_grupo("Creación de lista e inserción");
+  pa2m_nuevo_grupo("Creación de lista");
   prueba_crear_lista();
-  prueba_insertar_elementos();
+  pa2m_nuevo_grupo("Inserción secuencial y aleatoria");
+  prueba_insertar_elementos_secuencia();
+  prueba_insertar_elementos_aleatorio();
   return 0;
 }

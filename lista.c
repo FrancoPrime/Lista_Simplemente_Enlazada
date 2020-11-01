@@ -3,6 +3,22 @@
 #define EXITO 0
 #define ERROR -1
 
+//Devuelve el nodo en la posicion indicada, donde 0 es el primer
+//elemento.
+//Si no existe dicha posicion devuelve NULL.
+nodo_t* lista_nodo_en_posicion(lista_t* lista, size_t posicion){
+  if(!lista || lista->cantidad < posicion)
+    return NULL;
+  nodo_t* nodo_actual = lista->nodo_inicio;
+  size_t indice=0;
+  while(indice < posicion)
+  {
+    nodo_actual = nodo_actual->siguiente;
+    indice++;
+  }
+  return nodo_actual;
+}
+
 //Pre: -
 //Post: Si puede crear la lista devuelve un puntero a ella
 lista_t* lista_crear(){
@@ -50,7 +66,7 @@ int lista_insertar_en_posicion(lista_t* lista, void* elemento, size_t posicion){
   nodo_t* nuevo_nodo = malloc(sizeof(nodo_t));
   if(!nuevo_nodo)
     return ERROR;
-  nodo_t* nodo_anterior = lista_elemento_en_posicion(lista, posicion-1);
+  nodo_t* nodo_anterior = lista_nodo_en_posicion(lista, posicion-1);
   nuevo_nodo->siguiente = nodo_anterior->siguiente;
   nuevo_nodo->elemento = elemento;
   nodo_anterior->siguiente = nuevo_nodo;
@@ -72,7 +88,7 @@ int lista_borrar(lista_t* lista){
   }
   else
   {
-    nodo_t* nodo_anterior = lista_elemento_en_posicion(lista, (lista->cantidad)-2);
+    nodo_t* nodo_anterior = lista_nodo_en_posicion(lista, (lista->cantidad)-2);
     nodo_anterior->siguiente = NULL;
     free(lista->nodo_fin);
     lista->nodo_fin = nodo_anterior;
@@ -80,7 +96,6 @@ int lista_borrar(lista_t* lista){
   }
   return EXITO;
 }
-
 
 //Quita de la lista el elemento que se encuentra en la posición
 //indicada, donde 0 es el primer elemento.
@@ -122,7 +137,7 @@ void* lista_elemento_en_posicion(lista_t* lista, size_t posicion){
     nodo_actual = nodo_actual->siguiente;
     indice++;
   }
-  return nodo_actual;
+  return nodo_actual->elemento;
 }
 
 //Devuelve el último elemento de la lista o NULL si la lista se
