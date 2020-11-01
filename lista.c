@@ -115,7 +115,7 @@ int lista_borrar_de_posicion(lista_t* lista, size_t posicion){
   }
   else
   {
-    nodo_t* nodo_anterior = lista_elemento_en_posicion(lista, posicion-1);
+    nodo_t* nodo_anterior = lista_nodo_en_posicion(lista, posicion-1);
     nodo_t* auxiliar = nodo_anterior->siguiente;
     nodo_anterior->siguiente = auxiliar->siguiente;
     free(auxiliar);
@@ -147,7 +147,7 @@ void* lista_ultimo(lista_t* lista){
     return NULL;
   if(lista->nodo_fin == NULL)
     return NULL;
-  return lista->nodo_fin;
+  return lista->nodo_fin->elemento;
 }
 
 
@@ -203,7 +203,7 @@ void* lista_primero(lista_t* lista){
     return NULL;
   if(lista->nodo_inicio == NULL)
     return NULL;
-  return lista->nodo_inicio;
+  return lista->nodo_inicio->elemento;
 }
 
 //Pre: Recibe un puntero a una lista
