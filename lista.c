@@ -194,6 +194,63 @@ void* lista_primero(lista_t* lista){
 //Pre: Recibe un puntero a una lista
 //Post: Libera el bloque de memoria al que apunta
 void lista_destruir(lista_t* lista){
-
+  if(!lista)
+    return;
   free(lista);
+}
+
+//Crea un iterador para una lista.
+//Al momento de la creación, el iterador queda listo para devolver el
+//primer elemento utilizando lista_iterador_elemento_actual.
+//Devuelve el puntero al iterador creado o NULL en caso de error.
+lista_iterador_t* lista_iterador_crear(lista_t* lista){
+  lista_iterador_t* iterador = malloc(sizeof(lista_iterador_t));
+  if(!iterador)
+    return NULL;
+  iterador->lista = lista;
+  iterador->corriente = lista->nodo_inicio;
+  return iterador;
+}
+
+//Devuelve true si hay mas elementos sobre los cuales iterar o false
+//si no hay mas.
+bool lista_iterador_tiene_siguiente(lista_iterador_t* iterador){
+  if(!iterador)
+    return false;
+  return (iterador->corriente->siguiente != NULL);
+}
+
+//Avanza el iterador al siguiente elemento.
+//Devuelve true si pudo avanzar el iterador o false en caso de
+//que no queden elementos o en caso de error.
+bool lista_iterador_avanzar(lista_iterador_t* iterador){
+  if(!iterador)
+    return false;
+  if(iterador->corriente == NULL)
+    return false;
+  iterador->corriente = iterador->corriente->siguiente;
+  return true;
+}
+
+//Devuelve el elemento actual del iterador o NULL en caso de que no
+//exista dicho elemento o en caso de error.
+void* lista_iterador_elemento_actual(lista_iterador_t* iterador){
+  if(!iterador)
+    return NULL;
+  return iterador->corriente;
+}
+
+//Libera la memoria reservada por el iterador.
+void lista_iterador_destruir(lista_iterador_t* iterador){
+  if(!iterador)
+    return;
+  free(iterador);
+}
+
+//Iterador interno. Recorre la lista e invoca la funcion con cada elemento de
+//la misma. Dicha función puede devolver true si se deben seguir recorriendo
+//elementos o false si se debe dejar de iterar elementos.
+//La función retorna la cantidad de elementos iterados o 0 en caso de error.
+size_t lista_con_cada_elemento(lista_t* lista, bool (*funcion)(void*, void*), void *contexto){
+  return 0;
 }
