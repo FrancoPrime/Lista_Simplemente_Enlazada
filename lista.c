@@ -47,24 +47,66 @@ int lista_insertar_en_posicion(lista_t* lista, void* elemento, size_t posicion){
     return ERROR;
   if(lista->cantidad < posicion)
     return lista_insertar(lista, elemento);
-
+  nodo_t* nuevo_nodo = malloc(sizeof(nodo_t));
+  if(!nuevo_nodo)
+    return ERROR;
+  nodo_t* nodo_anterior = lista_elemento_en_posicion(lista, posicion-1);
+  nuevo_nodo->siguiente = nodo_anterior->siguiente;
+  nuevo_nodo->elemento = elemento;
+  nodo_anterior->siguiente = nuevo_nodo;
+  lista->cantidad += 1;
+  return EXITO;
 }
 
 //Quita de la lista el elemento que se encuentra en la ultima posición.
 //Devuelve EXITO si pudo eliminar o ERROR si no pudo.
 int lista_borrar(lista_t* lista){
-  if(!lista)
+  if(!lista || lista->cantidad == 0)
     return ERROR;
-  if(lista->nodo_fin == NULL) //TO DO
-    return ERROR;
+  if(lista->cantidad == 1)
+  {
+    free(lista->nodo_fin);
+    lista->nodo_fin = NULL;
+    lista->nodo_inicio = NULL;
+    lista->cantidad = 0;
+  }
+  else
+  {
+    nodo_t* nodo_anterior = lista_elemento_en_posicion(lista, (lista->cantidad)-2);
+    nodo_anterior->siguiente == NULL;
+    free(lista->nodo_fin);
+    lista->nodo_fin = nodo_anterior;
+    lista->cantidad -= 1;
+  }
   return EXITO;
+}
+
+
+//Quita de la lista el elemento que se encuentra en la posición
+//indicada, donde 0 es el primer elemento.
+//En caso de no existir esa posición se intentará borrar el último
+//elemento.
+//Devuelve EXITO si pudo eliminar o ERROR si no pudo.
+int lista_borrar_de_posicion(lista_t* lista, size_t posicion){
+  if(!lista)
+    return NULL;
+  
 }
 
 //Devuelve el elemento en la posicion indicada, donde 0 es el primer
 //elemento.
 //Si no existe dicha posicion devuelve NULL.
 void* lista_elemento_en_posicion(lista_t* lista, size_t posicion){
-  
+  if(!lista || lista->cantidad < posicion)
+    return NULL;
+  nodo_t* nodo_actual = lista->nodo_inicio;
+  size_t indice=0;
+  while(indice < posicion)
+  {
+    nodo_actual = nodo_actual->siguiente;
+    indice++;
+  }
+  return nodo_actual;
 }
 
 //Devuelve el último elemento de la lista o NULL si la lista se
