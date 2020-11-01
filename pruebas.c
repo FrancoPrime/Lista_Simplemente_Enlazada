@@ -12,10 +12,15 @@ void prueba_crear_lista(){
 
 void prueba_insertar_elementos(){
   lista_t* lista = lista_crear();
-  lista_insertar(lista, (void*)2);
+  for(int i=0;i<10;i++)
+  {
+
+  }
   int resultado = lista_insertar(lista, (void*)4);
   pa2m_afirmar(resultado == EXITO, "Insertar elementos");
   pa2m_afirmar(lista_elementos(lista) == 2, "Contador de elementos");
+  nodo_t* elemento = lista_elemento_en_posicion(lista, 0);
+  pa2m_afirmar(lista_elementos(lista) == 2, "Se pueden encontrar los elementos correctamente");
   lista_destruir(lista);
 }
 

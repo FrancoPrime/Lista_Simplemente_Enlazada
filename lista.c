@@ -196,6 +196,10 @@ void* lista_primero(lista_t* lista){
 void lista_destruir(lista_t* lista){
   if(!lista)
     return;
+  while(lista->cantidad > 0)
+  {
+    lista_borrar_de_posicion(lista, 0);
+  }
   free(lista);
 }
 
@@ -252,5 +256,16 @@ void lista_iterador_destruir(lista_iterador_t* iterador){
 //elementos o false si se debe dejar de iterar elementos.
 //La función retorna la cantidad de elementos iterados o 0 en caso de error.
 size_t lista_con_cada_elemento(lista_t* lista, bool (*funcion)(void*, void*), void *contexto){
-  return 0;
+  if(!lista || lista->cantidad == 0)
+    return 0;
+  nodo_t* nodo_actual = lista->nodo_inicio;
+  size_t indice = 0;
+  bool seguir_recorriendo=true;
+  while(nodo_actual != NULL && seguir_recorriendo)
+  {
+    seguir_recorriendo = funcion(nodo_actual->elemento, nodo_actual->siguiente);
+    nodo_actual = nodo_actual->siguiente;
+    indice++;
+  }
+  return indice;
 }
