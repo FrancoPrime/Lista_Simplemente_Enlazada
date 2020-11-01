@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "lista.h"
 #include "pa2mm.h"
 #define EXITO 0
@@ -44,34 +45,37 @@ void probar_operaciones_cola(){
     int numeros[]={1,2,3,4,5,6};
 
     for(size_t i=0; i<sizeof(numeros)/sizeof(int); i++){
-        printf("Encolo %i\n", numeros[i]);
         lista_encolar(cola, &numeros[i]);
     }
 
-    printf("\nDesencolo los numeros y los muestro: ");
+    bool respeta_elementos=true;
+    int i=1;
     while(!lista_vacia(cola)){
-        printf("%i ", *(int*)lista_primero(cola));
+        if(*(int*)lista_primero(cola) != i)
+          respeta_elementos = false;
         lista_desencolar(cola);
+        i++;
     }
-    printf("\n");
+    pa2m_afirmar(respeta_elementos, "Cumple las funciones de cola");
     lista_destruir(cola);
 }
 
 void probar_operaciones_pila(){
     lista_t* pila = lista_crear();
     char* algo="somtirogla";
-
+    char texto_resultado[20];
+    strcpy(texto_resultado, "Nada");
     for(int i=0; algo[i]!= 0; i++){
-        printf("Apilo %c\n", algo[i]);
         lista_apilar(pila, &algo[i]);
     }
-
-    printf("\nDesapilo y muestro los elementos apilados: ");
+    size_t i=0;
     while(!lista_vacia(pila)){
-        printf("%c", *(char*)lista_tope(pila));
+        texto_resultado[i] = *(char*)lista_tope(pila);
         lista_desapilar(pila);
+        i++;
     }
-    printf("\n");
+    texto_resultado[i] = '\0';
+    pa2m_afirmar(strcmp(texto_resultado, "algoritmos") == 0, "Cumple las funciones de pila");
     lista_destruir(pila);
 }
 
@@ -115,5 +119,8 @@ int main(){
   probar_insertar_elementos_aleatorio();
   pa2m_nuevo_grupo("Iteradores");
   probar_operaciones_iteradores();
+  pa2m_nuevo_grupo("Operaciones de pila y cola");
+  probar_operaciones_pila();
+  probar_operaciones_cola();
   return 0;
 }
