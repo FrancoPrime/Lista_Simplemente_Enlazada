@@ -236,7 +236,7 @@ lista_iterador_t* lista_iterador_crear(lista_t* lista){
 bool lista_iterador_tiene_siguiente(lista_iterador_t* iterador){
   if(!iterador)
     return false;
-  return (iterador->corriente->siguiente != NULL);
+  return (iterador->corriente != NULL);
 }
 
 //Avanza el iterador al siguiente elemento.
@@ -256,7 +256,7 @@ bool lista_iterador_avanzar(lista_iterador_t* iterador){
 void* lista_iterador_elemento_actual(lista_iterador_t* iterador){
   if(!iterador)
     return NULL;
-  return iterador->corriente;
+  return iterador->corriente->elemento;
 }
 
 //Libera la memoria reservada por el iterador.
@@ -278,7 +278,7 @@ size_t lista_con_cada_elemento(lista_t* lista, bool (*funcion)(void*, void*), vo
   bool seguir_recorriendo=true;
   while(nodo_actual != NULL && seguir_recorriendo)
   {
-    seguir_recorriendo = funcion(nodo_actual->elemento, nodo_actual->siguiente);
+    seguir_recorriendo = funcion(nodo_actual->elemento, contexto);
     nodo_actual = nodo_actual->siguiente;
     indice++;
   }

@@ -4,43 +4,37 @@
 #define EXITO 0
 #define ERROR -1
 
-void probar_operaciones_lista(){
+bool mostrar_elemento(void* elemento, void* contador){
+    if(elemento && contador)
+        (*(int*)contador)++;
+    return true;
+}
+
+void probar_operaciones_iteradores(){
     lista_t* lista = lista_crear();
-    char a='a', b='b', c='c', d='d', w='w';
+    char a='a', b='b', c='c', d='d';
+    char e='e', f='f', g='g', h='h';
 
     lista_insertar(lista, &a);
     lista_insertar(lista, &c);
     lista_insertar_en_posicion(lista, &d, 100);
     lista_insertar_en_posicion(lista, &b, 1);
-    lista_insertar_en_posicion(lista, &w, 3);
+    lista_insertar(lista, &e);
+    lista_insertar(lista, &f);
+    lista_insertar(lista, &g);
+    lista_insertar(lista, &h);
 
-    lista_borrar_de_posicion(lista, 3);
-
-    printf("Elementos en la lista: ");
-    for(size_t i=0; i<lista_elementos(lista); i++)
-        printf("%c ", *(char*)lista_elemento_en_posicion(lista, i));
-
-    printf("\n\n");
-    /*
-    printf("Imprimo la lista usando el iterador externo: \n");
     lista_iterador_t* it = NULL;
 
-    for(it = lista_iterador_crear(lista);
-        lista_iterador_tiene_siguiente(it);
-        lista_iterador_avanzar(it))
-        printf("%c ", *(char*)lista_iterador_elemento_actual(it));
-    printf("\n\n");
-
+    it = lista_iterador_crear(lista);
+    lista_iterador_avanzar(it);
+    lista_iterador_avanzar(it);
+    pa2m_afirmar(*(char*)lista_iterador_elemento_actual(it) == c, "El iterador externo funciona");
     lista_iterador_destruir(it);
-
     int contador=0;
     size_t elementos_recorridos = 0;
-    printf("Imprimo la lista usando el iterador interno: \n");
     elementos_recorridos = lista_con_cada_elemento(lista, mostrar_elemento, (void*)&contador);
-
-    printf("Recorri %lu elementos con el iterador interno y sume %i elementos\n", elementos_recorridos, contador);
-
-    printf("\n");*/
+    pa2m_afirmar(elementos_recorridos == 8 && contador==8, "El iterador interno funciona");
     lista_destruir(lista);
 }
 
@@ -81,13 +75,13 @@ void probar_operaciones_pila(){
     lista_destruir(pila);
 }
 
-void prueba_crear_lista(){
+void probar_crear_lista(){
   lista_t* lista = lista_crear();
   pa2m_afirmar(lista != NULL, "Crear una lista");
   lista_destruir(lista);
 }
 
-void prueba_insertar_elementos_secuencia(){
+void probar_insertar_elementos_secuencia(){
   lista_t* lista = lista_crear();
   for(size_t i=0;i<10;i++)
   {
@@ -100,7 +94,7 @@ void prueba_insertar_elementos_secuencia(){
   lista_destruir(lista);
 }
 
-void prueba_insertar_elementos_aleatorio(){
+void probar_insertar_elementos_aleatorio(){
   lista_t* lista = lista_crear();
   for(size_t i=0;i<10;i++)
   {
@@ -115,9 +109,11 @@ void prueba_insertar_elementos_aleatorio(){
 
 int main(){
   pa2m_nuevo_grupo("Creación de lista");
-  prueba_crear_lista();
+  probar_crear_lista();
   pa2m_nuevo_grupo("Inserción secuencial y aleatoria");
-  prueba_insertar_elementos_secuencia();
-  prueba_insertar_elementos_aleatorio();
+  probar_insertar_elementos_secuencia();
+  probar_insertar_elementos_aleatorio();
+  pa2m_nuevo_grupo("Iteradores");
+  probar_operaciones_iteradores();
   return 0;
 }
