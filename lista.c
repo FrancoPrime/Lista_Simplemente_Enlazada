@@ -31,23 +31,35 @@ lista_t* lista_crear(){
   return lista;
 }
 
-//Inserta un elemento al final de la lista.
+//Inserta un elemento al principio de la lista.
 //Devuelve EXITO si pudo insertar o ERROR si no pudo.
-int lista_insertar(lista_t* lista, void* elemento){
+int lista_insertar_inicio(lista_t* lista, void* elemento){
   if(!lista)
     return ERROR;
   nodo_t* nodo_nuevo = malloc(sizeof(nodo_t));
   if(!nodo_nuevo)
     return ERROR;
+  nodo_nuevo->siguiente = lista->nodo_inicio;
+  nodo_nuevo->elemento = elemento;
+  lista->nodo_inicio = nodo_nuevo;
+  if(lista->cantidad == 0)
+    lista->nodo_fin = nodo_nuevo;
+  lista->cantidad += 1;
+  return EXITO;
+}
+
+//Inserta un elemento al final de la lista.
+//Devuelve EXITO si pudo insertar o ERROR si no pudo.
+int lista_insertar(lista_t* lista, void* elemento){
+  if(!lista)
+    return ERROR;
+  if(lista->cantidad == 0)
+    return lista_insertar_inicio(lista, elemento);
+  nodo_t* nodo_nuevo = malloc(sizeof(nodo_t));
+  if(!nodo_nuevo)
+    return ERROR;
   nodo_nuevo->siguiente = NULL;
   nodo_nuevo->elemento = elemento;
-  if(lista->cantidad == 0)
-  {
-    lista->nodo_inicio = nodo_nuevo;
-    lista->nodo_fin = nodo_nuevo;
-    lista->cantidad = 1;
-    return EXITO;
-  }
   lista->nodo_fin->siguiente = nodo_nuevo;
   lista->nodo_fin = nodo_nuevo;
   lista->cantidad += 1;
@@ -61,15 +73,17 @@ int lista_insertar(lista_t* lista, void* elemento){
 int lista_insertar_en_posicion(lista_t* lista, void* elemento, size_t posicion){
   if(!lista)
     return ERROR;
+  if(posicion == 0)
+    return lista_insertar_inicio(lista, elemento);
   if(lista->cantidad < posicion)
     return lista_insertar(lista, elemento);
-  nodo_t* nuevo_nodo = malloc(sizeof(nodo_t));
-  if(!nuevo_nodo)
+  nodo_t* nodo_nuevo = malloc(sizeof(nodo_t));
+  if(!nodo_nuevo)
     return ERROR;
   nodo_t* nodo_anterior = lista_nodo_en_posicion(lista, posicion-1);
-  nuevo_nodo->siguiente = nodo_anterior->siguiente;
-  nuevo_nodo->elemento = elemento;
-  nodo_anterior->siguiente = nuevo_nodo;
+  nodo_nuevo->siguiente = nodo_anterior->siguiente;
+  nodo_nuevo->elemento = elemento;
+  nodo_anterior->siguiente = nodo_nuevo;
   lista->cantidad += 1;
   return EXITO;
 }
@@ -150,11 +164,10 @@ void* lista_ultimo(lista_t* lista){
   return lista->nodo_fin->elemento;
 }
 
-
-//Devuelve true solo si la lista existe y está vacía
+//Devuelve true solo si la lista está vacía
 bool lista_vacia(lista_t* lista){
   if(!lista)
-    return false;
+    return true;
   return (lista->cantidad == 0);
 }
 
@@ -169,19 +182,21 @@ size_t lista_elementos(lista_t* lista){
 //Apila un elemento.
 //Devuelve 0 si pudo o -1 en caso contrario.
 int lista_apilar(lista_t* lista, void* elemento){
-  return lista_insertar(lista, elemento);
+  return lista_insertar_en_posicion(lista, elemento, 0);
 }
 
 //Desapila un elemento.
 //Devuelve EXITO si pudo desapilar o ERROR si no pudo.
 int lista_desapilar(lista_t* lista){
-  return lista_borrar(lista);
+  return lista_borrar_de_posicion(lista, 0);
 }
 
 //Devuelve el elemento en el tope de la pila o NULL
 //en caso de estar vacía.
 void* lista_tope(lista_t* lista){
-  return lista_ultimo(lista);
+  if(lista_vacia(lista))
+    return NULL;
+  return lista->nodo_inicio->elemento;
 }
 
 //Encola un elemento.
@@ -199,11 +214,7 @@ int lista_desencolar(lista_t* lista){
 //Devuelve el primer elemento de la cola o NULL en caso de estar
 //vacía.
 void* lista_primero(lista_t* lista){
-  if(!lista)
-    return NULL;
-  if(lista->nodo_inicio == NULL)
-    return NULL;
-  return lista->nodo_inicio->elemento;
+  return lista_tope(lista);
 }
 
 //Pre: Recibe un puntero a una lista
@@ -223,6 +234,8 @@ void lista_destruir(lista_t* lista){
 //primer elemento utilizando lista_iterador_elemento_actual.
 //Devuelve el puntero al iterador creado o NULL en caso de error.
 lista_iterador_t* lista_iterador_crear(lista_t* lista){
+  if(!lista)
+    return NULL;
   lista_iterador_t* iterador = malloc(sizeof(lista_iterador_t));
   if(!iterador)
     return NULL;

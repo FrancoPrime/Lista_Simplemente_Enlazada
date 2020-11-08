@@ -32,10 +32,10 @@ void probar_operaciones_iteradores(){
     lista_iterador_avanzar(it);
     pa2m_afirmar(*(char*)lista_iterador_elemento_actual(it) == c, "El iterador externo funciona");
     lista_iterador_destruir(it);
-    int contador=0;
+    int contador = 0;
     size_t elementos_recorridos = 0;
     elementos_recorridos = lista_con_cada_elemento(lista, mostrar_elemento, (void*)&contador);
-    pa2m_afirmar(elementos_recorridos == 8 && contador==8, "El iterador interno funciona");
+    pa2m_afirmar(elementos_recorridos == 8 && contador == 8, "El iterador interno funciona");
     lista_destruir(lista);
 }
 
@@ -85,6 +85,30 @@ void probar_crear_lista(){
   lista_destruir(lista);
 }
 
+void probar_insertar_con_NULL(){
+  int resultado = lista_insertar(NULL, (void*)2);
+  pa2m_afirmar(resultado == ERROR, "Quiero insertar un numero a NULL y no me deja");
+  resultado = lista_insertar_en_posicion(NULL, &resultado, 3);
+  pa2m_afirmar(resultado == ERROR, "Quiero insertar un numero a NULL en una posicion y no me deja");
+  resultado = lista_borrar(NULL);
+  pa2m_afirmar(resultado == ERROR, "Quiero borrar el ultimo elemento de una lista NULL y no me deja");
+  resultado = lista_borrar_de_posicion(NULL, 5);
+  pa2m_afirmar(resultado == ERROR, "Quiero borrar el quinto elemento de una lista NULL y no me deja");
+  void* elemento = lista_elemento_en_posicion(NULL, 5);
+  pa2m_afirmar(elemento == NULL, "Quiero obtener el quinto elemento de una lista NULL y me devuelve NULL");
+  void* elemento2 = lista_ultimo(NULL);
+  pa2m_afirmar(elemento2 == NULL, "Quiero obtener el ultimo elemento de una lista NULL y me devuelve NULL");
+  bool vacia = lista_vacia(NULL);
+  pa2m_afirmar(vacia == true, "Quiero saber si una lista NULL está vacia");
+  size_t cantidad_elementos = lista_elementos(NULL);
+  pa2m_afirmar(cantidad_elementos == 0, "La cantidad de elementos de una lista NULL es 0");
+  lista_iterador_t* iterador = lista_iterador_crear(NULL);
+  pa2m_afirmar(iterador == NULL, "Quiero crear un iterador con una lista NULL y me devuelve NULL");
+  bool tiene_siguiente = lista_iterador_tiene_siguiente(NULL);
+  pa2m_afirmar(tiene_siguiente == false, "Un iterador NULL no tiene siguiente");
+
+}
+
 void probar_insertar_elementos_secuencia(){
   lista_t* lista = lista_crear();
   for(size_t i=0;i<10;i++)
@@ -117,10 +141,13 @@ int main(){
   pa2m_nuevo_grupo("Inserción secuencial y aleatoria");
   probar_insertar_elementos_secuencia();
   probar_insertar_elementos_aleatorio();
+  pa2m_nuevo_grupo("Inserción de cosas con NULL");
+  probar_insertar_con_NULL();
   pa2m_nuevo_grupo("Iteradores");
   probar_operaciones_iteradores();
   pa2m_nuevo_grupo("Operaciones de pila y cola");
   probar_operaciones_pila();
   probar_operaciones_cola();
-  return 0;
+
+  return pa2m_mostrar_reporte();
 }
