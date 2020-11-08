@@ -91,7 +91,7 @@ int lista_insertar_en_posicion(lista_t* lista, void* elemento, size_t posicion){
 //Quita de la lista el elemento que se encuentra en la ultima posición.
 //Devuelve EXITO si pudo eliminar o ERROR si no pudo.
 int lista_borrar(lista_t* lista){
-  if(!lista || lista->cantidad == 0)
+  if(lista_vacia(lista))
     return ERROR;
   if(lista->cantidad == 1)
   {
@@ -267,7 +267,7 @@ bool lista_iterador_avanzar(lista_iterador_t* iterador){
 //Devuelve el elemento actual del iterador o NULL en caso de que no
 //exista dicho elemento o en caso de error.
 void* lista_iterador_elemento_actual(lista_iterador_t* iterador){
-  if(!iterador)
+  if(!iterador || !(iterador->corriente))
     return NULL;
   return iterador->corriente->elemento;
 }
@@ -284,7 +284,7 @@ void lista_iterador_destruir(lista_iterador_t* iterador){
 //elementos o false si se debe dejar de iterar elementos.
 //La función retorna la cantidad de elementos iterados o 0 en caso de error.
 size_t lista_con_cada_elemento(lista_t* lista, bool (*funcion)(void*, void*), void *contexto){
-  if(!lista || lista->cantidad == 0)
+  if(lista_vacia(lista))
     return 0;
   nodo_t* nodo_actual = lista->nodo_inicio;
   size_t indice = 0;
