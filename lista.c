@@ -157,9 +157,7 @@ void* lista_elemento_en_posicion(lista_t* lista, size_t posicion){
 //Devuelve el último elemento de la lista o NULL si la lista se
 //encuentra vacía.
 void* lista_ultimo(lista_t* lista){
-  if(!lista)
-    return NULL;
-  if(lista->nodo_fin == NULL)
+  if(lista_vacia(lista))
     return NULL;
   return lista->nodo_fin->elemento;
 }
@@ -285,6 +283,8 @@ void lista_iterador_destruir(lista_iterador_t* iterador){
 //La función retorna la cantidad de elementos iterados o 0 en caso de error.
 size_t lista_con_cada_elemento(lista_t* lista, bool (*funcion)(void*, void*), void *contexto){
   if(lista_vacia(lista))
+    return 0;
+  if(funcion == NULL)
     return 0;
   nodo_t* nodo_actual = lista->nodo_inicio;
   size_t indice = 0;

@@ -44,23 +44,32 @@ void probar_operaciones_iteradores(){
     pa2m_afirmar(puede_avanzar_mas_alla == false, "El iterador no puede avanzar más allá del final");
     pa2m_afirmar(lista_iterador_elemento_actual(it) == NULL, "Le pido el elemento cuando ya termino de iterar y me devuelve NULL");
     lista_iterador_destruir(it);
+    size_t cant_elementos = lista_elementos(lista);
     int contador = 0;
     size_t elementos_recorridos = 0;
+    elementos_recorridos = lista_con_cada_elemento(lista, NULL, (void*)&contador);
+    pa2m_afirmar(elementos_recorridos == 0 && contador == 0, "El iterador interno no itera si le pasas una funcion NULL");
     elementos_recorridos = lista_con_cada_elemento(lista, mostrar_elemento, (void*)&contador);
-    pa2m_afirmar(elementos_recorridos == 8 && contador == 8, "El iterador interno realiza la iteración correctamente");
-
+    pa2m_afirmar(elementos_recorridos == cant_elementos && contador == (int)cant_elementos, "El iterador interno realiza una iteración completa");
+    elementos_recorridos = lista_con_cada_elemento(lista, mostrar_elemento, NULL);
+    pa2m_afirmar(elementos_recorridos == cant_elementos, "El iterador interno realiza la iteración completa sin pasarle contexto");
     lista_destruir(lista);
 }
 
 void probar_operaciones_cola(){
+    pa2m_afirmar(lista_encolar(NULL, (void*)1) == ERROR, "No me deja encolar en una cola NULL");
+    pa2m_afirmar(lista_desencolar(NULL) == ERROR, "No me deja desencolar en una cola NULL");
+    pa2m_afirmar(lista_primero(NULL) == NULL, "No hay elementos en una cola NULL");
     lista_t* cola = lista_crear();
 
     int numeros[]={1,2,3,4,5,6};
-
+    bool hubo_error = false;
     for(size_t i=0; i<sizeof(numeros)/sizeof(int); i++){
-        lista_encolar(cola, &numeros[i]);
+        int resultado = lista_encolar(cola, &numeros[i]);
+        if(resultado == ERROR) hubo_error = true;
     }
-
+    pa2m_afirmar(hubo_error == false, "Puedo encolar elementos");
+    pa2m_afirmar(*(int*)lista_primero(cola) == 1, "Respeta el orden de la cola");
     bool respeta_elementos=true;
     int i=1;
     while(!lista_vacia(cola)){
@@ -69,18 +78,25 @@ void probar_operaciones_cola(){
         lista_desencolar(cola);
         i++;
     }
-    pa2m_afirmar(respeta_elementos, "Cumple las funciones de cola");
+    pa2m_afirmar(respeta_elementos, "Los elementos se desencolan correctamente");
     lista_destruir(cola);
 }
 
 void probar_operaciones_pila(){
+    pa2m_afirmar(lista_apilar(NULL, (void*)1) == ERROR, "No me deja apilar en una pila NULL");
+    pa2m_afirmar(lista_desapilar(NULL) == ERROR, "No me deja desapilar en una pila NULL");
+    pa2m_afirmar(lista_tope(NULL) == NULL, "No hay nada apilado en una pila NULL");
     lista_t* pila = lista_crear();
     char* algo="somtirogla";
     char texto_resultado[20];
     strcpy(texto_resultado, "Nada");
+    bool hubo_error = false;
     for(int i=0; algo[i]!= 0; i++){
-        lista_apilar(pila, &algo[i]);
+        int resultado = lista_apilar(pila, &algo[i]);
+        if (resultado == ERROR) hubo_error = true;
     }
+    pa2m_afirmar(hubo_error == false, "Puedo apilar elementos");
+    pa2m_afirmar(*(char*)lista_tope(pila) == 'a', "Respeta el orden de la pila");
     size_t i=0;
     while(!lista_vacia(pila)){
         texto_resultado[i] = *(char*)lista_tope(pila);
@@ -88,13 +104,14 @@ void probar_operaciones_pila(){
         i++;
     }
     texto_resultado[i] = '\0';
-    pa2m_afirmar(strcmp(texto_resultado, "algoritmos") == 0, "Cumple las funciones de pila");
+    pa2m_afirmar(strcmp(texto_resultado, "algoritmos") == 0, "Los elementos se desapilan correctamente");
     lista_destruir(pila);
 }
 
 void probar_lista_vacia(){
   lista_t* lista = lista_crear();
-  pa2m_afirmar(lista != NULL && lista->nodo_inicio == NULL && lista->cantidad == 0, "Crear una lista");
+  pa2m_afirmar(lista != NULL && lista->nodo_inicio == NULL && lista_elementos(lista) == 0, "Puedo crear una lista");
+  pa2m_afirmar(lista_vacia(lista) == true, "La lista está vacia");
   int resultado = lista_borrar(lista);
   pa2m_afirmar(resultado == ERROR, "No me deja borrar elementos de una lista vacia");
   lista_destruir(lista);
@@ -138,7 +155,7 @@ void probar_insertar_elementos_secuencia(){
     lista_insertar(lista, (void*)i);
   }
   int resultado = lista_insertar(lista, (void*)4);
-  pa2m_afirmar(resultado == EXITO && lista_elementos(lista) == 12, "Inserto varios nodos secuencialmente");
+  pa2m_afirmar(resultado == EXITO && lista_elementos(lista) == 12, "Inserto varios elementos secuencialmente");
   void* elemento = lista_elemento_en_posicion(lista, 4);
   pa2m_afirmar(elemento == (void*)3, "Los elementos son correctos al añadir secuencialmente");
   pa2m_afirmar(lista_primero(lista) == (void*)7 && lista_ultimo(lista) == (void*)4, "La lista se encuentra integra al añadir secuencialmente");
@@ -154,7 +171,7 @@ void probar_insertar_elementos_aleatorio(){
   lista_insertar_en_posicion(lista, (void*)99, 0);
   pa2m_afirmar(lista_elemento_en_posicion(lista, 0) == (void*)99, "Inserto un elemento en la posicion inicial de una lista no vacia");
   int resultado = lista_insertar_en_posicion(lista, (void*)99, 3);
-  pa2m_afirmar(resultado == EXITO && lista_elementos(lista) == 12, "Inserto un nodo en una posicion aleatoria");
+  pa2m_afirmar(resultado == EXITO && lista_elementos(lista) == 12, "Inserto un elemento en una posicion aleatoria");
   void* elemento = lista_elemento_en_posicion(lista, 3);
   pa2m_afirmar(elemento == (void*)99, "Los elementos son correctos al añadir aleatoriamente");
   pa2m_afirmar(lista_primero(lista) == (void*)99 && lista_ultimo(lista) == (void*)9, "La lista se encuentra integra al añadir aleatoriamente");
