@@ -5,12 +5,14 @@
 #define EXITO 0
 #define ERROR -1
 
+//Si existen ambos parametros aumenta el segundo en 1, y siempre devuelve true
 bool mostrar_elemento(void* elemento, void* contador){
     if(elemento && contador)
         (*(int*)contador)++;
     return true;
 }
 
+//Prueba operaciones relacionadas con ambos iteradores
 void probar_operaciones_iteradores(){
     lista_t* lista = lista_crear();
     char a='a', b='b', c='c', d='d';
@@ -56,6 +58,7 @@ void probar_operaciones_iteradores(){
     lista_destruir(lista);
 }
 
+//Prueba que se comporte como una cola, cumpliendo el patrón FIFO
 void probar_operaciones_cola(){
     pa2m_afirmar(lista_encolar(NULL, (void*)1) == ERROR, "No me deja encolar en una cola NULL");
     pa2m_afirmar(lista_desencolar(NULL) == ERROR, "No me deja desencolar en una cola NULL");
@@ -82,6 +85,7 @@ void probar_operaciones_cola(){
     lista_destruir(cola);
 }
 
+//Prueba que se comporte como una pila, cumpliendo el patron LIFO
 void probar_operaciones_pila(){
     pa2m_afirmar(lista_apilar(NULL, (void*)1) == ERROR, "No me deja apilar en una pila NULL");
     pa2m_afirmar(lista_desapilar(NULL) == ERROR, "No me deja desapilar en una pila NULL");
@@ -108,15 +112,23 @@ void probar_operaciones_pila(){
     lista_destruir(pila);
 }
 
+//Prueba funciones con una lista vacía
 void probar_lista_vacia(){
   lista_t* lista = lista_crear();
-  pa2m_afirmar(lista != NULL && lista->nodo_inicio == NULL && lista_elementos(lista) == 0, "Puedo crear una lista");
+  pa2m_afirmar(lista != NULL && lista->nodo_inicio == NULL && lista->nodo_fin == NULL && lista_elementos(lista) == 0, "Puedo crear una lista");
   pa2m_afirmar(lista_vacia(lista) == true, "La lista está vacia");
   int resultado = lista_borrar(lista);
   pa2m_afirmar(resultado == ERROR, "No me deja borrar elementos de una lista vacia");
+  resultado = lista_borrar_de_posicion(lista, 0);
+  pa2m_afirmar(resultado == ERROR, "No me deja borrar el elemento de la posición 0");
+  void* elemento = lista_elemento_en_posicion(lista, 0);
+  pa2m_afirmar(elemento == NULL, "No puedo obtener el elemento de la posición 0");
+  void* elemento2 = lista_ultimo(lista);
+  pa2m_afirmar(elemento2 == NULL, "El último elemento no existe");
   lista_destruir(lista);
 }
 
+//Prueba funciones pasando NULL como parametro
 void probar_insertar_con_NULL(){
   int resultado = lista_insertar(NULL, (void*)2);
   pa2m_afirmar(resultado == ERROR, "Quiero insertar un numero a NULL y no me deja");
@@ -131,6 +143,12 @@ void probar_insertar_con_NULL(){
   void* elemento2 = lista_ultimo(NULL);
   pa2m_afirmar(elemento2 == NULL, "Quiero obtener el ultimo elemento de una lista NULL y me devuelve NULL");
   bool vacia = lista_vacia(NULL);
+  pa2m_afirmar(lista_apilar(NULL, NULL) == ERROR, "Pruebo apilar en una pila NULL y no me deja");
+  pa2m_afirmar(lista_desapilar(NULL) == ERROR, "Pruebo desapilar en una pila NULL y no me deja");
+  pa2m_afirmar(lista_tope(NULL) == NULL, "Busco el elemento al tope de una pila NULL y devuelve NULL");
+  pa2m_afirmar(lista_primero(NULL) == NULL, "Busco el primer elemento de una cola NULL y devuelve NULL");
+  pa2m_afirmar(lista_encolar(NULL, NULL) == ERROR, "Pruebo encolar en una cola NULL y no me deja");
+  pa2m_afirmar(lista_desencolar(NULL) == ERROR, "Pruebo desencolar en una cola NULL y no me deja");
   pa2m_afirmar(vacia == true, "Quiero saber si una lista NULL está vacia");
   size_t cantidad_elementos = lista_elementos(NULL);
   pa2m_afirmar(cantidad_elementos == 0, "La cantidad de elementos de una lista NULL es 0");
@@ -146,6 +164,7 @@ void probar_insertar_con_NULL(){
   pa2m_afirmar(iterador_interno == 0, "Quiero usar al iterador interno en una lista NULL y no me deja");
 }
 
+//Prueba comportamiento de lista añadiendo y sacando cosas del final
 void probar_insertar_elementos_secuencia(){
   lista_t* lista = lista_crear();
   lista_insertar(lista, (void*)7);
@@ -159,9 +178,12 @@ void probar_insertar_elementos_secuencia(){
   void* elemento = lista_elemento_en_posicion(lista, 4);
   pa2m_afirmar(elemento == (void*)3, "Los elementos son correctos al añadir secuencialmente");
   pa2m_afirmar(lista_primero(lista) == (void*)7 && lista_ultimo(lista) == (void*)4, "La lista se encuentra integra al añadir secuencialmente");
+  pa2m_afirmar(lista_elemento_en_posicion(lista, 12) == NULL, "El elemento en una posición inexistente es NULL");
+  pa2m_afirmar(lista_borrar_de_posicion(lista, 12) == EXITO, "Si quiero borrar de una posición inexistente me borra el último.");
   lista_destruir(lista);
 }
 
+//Prueba funciones de lista añadiendo y sacando cosas de forma aleatoria
 void probar_insertar_elementos_aleatorio(){
   lista_t* lista = lista_crear();
   for(size_t i=0;i<10;i++)

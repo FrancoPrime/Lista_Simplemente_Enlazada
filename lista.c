@@ -75,7 +75,7 @@ int lista_insertar_en_posicion(lista_t* lista, void* elemento, size_t posicion){
     return ERROR;
   if(posicion == 0)
     return lista_insertar_inicio(lista, elemento);
-  if(lista->cantidad < posicion)
+  if(lista->cantidad < posicion+1)
     return lista_insertar(lista, elemento);
   nodo_t* nodo_nuevo = malloc(sizeof(nodo_t));
   if(!nodo_nuevo)
@@ -119,7 +119,7 @@ int lista_borrar(lista_t* lista){
 int lista_borrar_de_posicion(lista_t* lista, size_t posicion){
   if(!lista)
     return ERROR;
-  if(lista->cantidad < posicion || lista->cantidad == 1)
+  if(lista->cantidad < posicion+1 || lista->cantidad == 1)
     return lista_borrar(lista);
   if(posicion == 0)
   {
@@ -142,7 +142,7 @@ int lista_borrar_de_posicion(lista_t* lista, size_t posicion){
 //elemento.
 //Si no existe dicha posicion devuelve NULL.
 void* lista_elemento_en_posicion(lista_t* lista, size_t posicion){
-  if(!lista || lista->cantidad < posicion)
+  if(!lista || lista->cantidad < posicion+1)
     return NULL;
   nodo_t* nodo_actual = lista->nodo_inicio;
   size_t indice=0;
@@ -180,21 +180,19 @@ size_t lista_elementos(lista_t* lista){
 //Apila un elemento.
 //Devuelve 0 si pudo o -1 en caso contrario.
 int lista_apilar(lista_t* lista, void* elemento){
-  return lista_insertar_en_posicion(lista, elemento, 0);
+  return lista_insertar(lista, elemento);
 }
 
 //Desapila un elemento.
 //Devuelve EXITO si pudo desapilar o ERROR si no pudo.
 int lista_desapilar(lista_t* lista){
-  return lista_borrar_de_posicion(lista, 0);
+  return lista_borrar(lista);
 }
 
 //Devuelve el elemento en el tope de la pila o NULL
 //en caso de estar vacía.
 void* lista_tope(lista_t* lista){
-  if(lista_vacia(lista))
-    return NULL;
-  return lista->nodo_inicio->elemento;
+  return lista_ultimo(lista);
 }
 
 //Encola un elemento.
@@ -212,7 +210,9 @@ int lista_desencolar(lista_t* lista){
 //Devuelve el primer elemento de la cola o NULL en caso de estar
 //vacía.
 void* lista_primero(lista_t* lista){
-  return lista_tope(lista);
+  if(lista_vacia(lista))
+    return NULL;
+  return lista->nodo_inicio->elemento;
 }
 
 //Pre: Recibe un puntero a una lista
