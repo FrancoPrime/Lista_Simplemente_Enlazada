@@ -254,12 +254,10 @@ bool lista_iterador_tiene_siguiente(lista_iterador_t* iterador){
 //Devuelve true si pudo avanzar el iterador o false en caso de
 //que no queden elementos o en caso de error.
 bool lista_iterador_avanzar(lista_iterador_t* iterador){
-  if(!iterador)
-    return false;
-  if(iterador->corriente == NULL)
+  if(!iterador || iterador->corriente == NULL)
     return false;
   iterador->corriente = iterador->corriente->siguiente;
-  return true;
+  return (iterador->corriente != NULL);
 }
 
 //Devuelve el elemento actual del iterador o NULL en caso de que no
@@ -282,9 +280,7 @@ void lista_iterador_destruir(lista_iterador_t* iterador){
 //elementos o false si se debe dejar de iterar elementos.
 //La función retorna la cantidad de elementos iterados o 0 en caso de error.
 size_t lista_con_cada_elemento(lista_t* lista, bool (*funcion)(void*, void*), void *contexto){
-  if(lista_vacia(lista))
-    return 0;
-  if(funcion == NULL)
+  if(lista_vacia(lista) || funcion == NULL)
     return 0;
   nodo_t* nodo_actual = lista->nodo_inicio;
   size_t indice = 0;

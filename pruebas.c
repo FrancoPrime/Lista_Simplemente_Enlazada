@@ -15,6 +15,12 @@ bool mostrar_elemento(void* elemento, void* contador){
 //Prueba operaciones relacionadas con ambos iteradores
 void probar_operaciones_iteradores(){
     lista_t* lista = lista_crear();
+    lista_iterador_t* iterador_vacio = lista_iterador_crear(lista);
+    pa2m_afirmar(iterador_vacio != NULL, "Puedo crear un iterador externo con una lista vacia");
+    pa2m_afirmar(lista_iterador_tiene_siguiente(iterador_vacio) == false, "Este iterador no tiene siguiente");
+    pa2m_afirmar(lista_iterador_avanzar(iterador_vacio) == false, "Este iterador no puede avanzar");
+    pa2m_afirmar(lista_iterador_elemento_actual(iterador_vacio) == NULL, "Este iterador no tiene elemento actual");
+    lista_iterador_destruir(iterador_vacio);
     char a='a', b='b', c='c', d='d';
     char e='e', f='f', g='g', h='h';
 
@@ -28,14 +34,13 @@ void probar_operaciones_iteradores(){
     lista_insertar(lista, &h);
 
     lista_iterador_t* it = lista_iterador_crear(lista);
-    pa2m_afirmar(it != NULL, "Puedo crear un iterador externo");
+    pa2m_afirmar(it != NULL, "Puedo crear un iterador externo con lista no vacia");
     bool puede_avanzar = lista_iterador_tiene_siguiente(it);
     pa2m_afirmar(puede_avanzar == true, "El iterador puede avanzar");
 
     lista_iterador_avanzar(it);
     lista_iterador_avanzar(it);
     pa2m_afirmar(*(char*)lista_iterador_elemento_actual(it) == c, "Le pido al iterador externo avanzar y funciona");
-    lista_iterador_avanzar(it);
     lista_iterador_avanzar(it);
     lista_iterador_avanzar(it);
     lista_iterador_avanzar(it);
